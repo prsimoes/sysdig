@@ -33,7 +33,8 @@ using namespace libsinsp;
 
 sinsp_container_manager::sinsp_container_manager(sinsp* inspector) :
 	m_inspector(inspector),
-	m_last_flush_time_ns(0)
+	m_last_flush_time_ns(0),
+	m_next_tick_ns(0)
 {
 }
 
@@ -479,5 +480,16 @@ void sinsp_container_manager::set_cri_timeout(int64_t timeout_ms)
 {
 #if defined(HAS_CAPTURE)
 	libsinsp::container_engine::cri::set_cri_timeout(timeout_ms);
+#endif
+}
+
+void sinsp_container_manager::tick()
+{
+#if defined(HAS_CAPTURE)
+	if (m_next_tick_ns == 0 || m_inspector->m_lastevent_ts > m_next_tick_ns)
+	{
+		libsinsp::container_engine::cri::tick(this);
+		m_next_tick_ns = m_inspector->m_lastevent_ts + m_tick_interval_ns;
+	}
 #endif
 }
