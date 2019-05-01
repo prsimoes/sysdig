@@ -488,7 +488,10 @@ void sinsp_container_manager::tick()
 #if defined(HAS_CAPTURE)
 	if (m_next_tick_ns == 0 || m_inspector->m_lastevent_ts > m_next_tick_ns)
 	{
-		libsinsp::container_engine::cri::tick(this);
+		for(auto &eng : m_container_engines)
+		{
+			eng->tick(this);
+		}
 		m_next_tick_ns = m_inspector->m_lastevent_ts + m_tick_interval_ns;
 	}
 #endif
