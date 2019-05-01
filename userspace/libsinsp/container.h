@@ -41,6 +41,7 @@ public:
 	bool remove_inactive_containers();
 	void add_container(const sinsp_container_info& container_info, sinsp_threadinfo *thread);
 	sinsp_container_info * get_container(const string &id);
+	sinsp_container_info * get_or_create_container(sinsp_container_type type, const string &id, const std::string& name, sinsp_threadinfo* tinfo);
 	void notify_new_container(const sinsp_container_info& container_info);
 	template<typename E> bool resolve_container_impl(sinsp_threadinfo* tinfo, bool query_os_for_missing_info);
 	template<typename E1, typename E2, typename... Args> bool resolve_container_impl(sinsp_threadinfo* tinfo, bool query_os_for_missing_info);
@@ -88,6 +89,8 @@ private:
 
 	static const uint64_t m_tick_interval_ns = 100*1000*1000; // 100 ms
 	uint64_t m_next_tick_ns;
+
+	static std::string s_incomplete_info_name;
 
 	friend class test_helper;
 };
